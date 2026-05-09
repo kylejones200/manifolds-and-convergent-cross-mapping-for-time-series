@@ -7,6 +7,12 @@ Causal inference method for detecting causality in time series using state space
 import sys
 from pathlib import Path
 
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 # Add src to path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -160,7 +166,7 @@ def create_visualizations(series1: np.ndarray, series2: np.ndarray, series1_name
     plt.tight_layout()
     output_dir = ensure_output_dir(get_output_dir(config, script_dir))
     save_plot(fig, output_dir / "ccm_analysis.png", dpi=300)
-    print(f"Plot saved to: {output_dir / 'ccm_analysis.png'}")
+    logger.info(f"Plot saved to: {output_dir / 'ccm_analysis.png'}")
 
 
 def main():
@@ -197,19 +203,19 @@ def main():
         series1 = _load_series("series1_file", "series1_col")
         series2 = _load_series("series2_file", "series2_col")
     
-    print(f"Loaded {len(series1)} data points for both series")
+    logger.info(f"Loaded {len(series1)} data points for both series")
     
     # Detect causality
-    print("\nDetecting causality using CCM...")
+    logger.info("\nDetecting causality using CCM...")
     results = detect_causality(series1, series2, config)
     
-    print(f"\nCCM Results:")
-    print(f"  {config['data']['series1_name']} → {config['data']['series2_name']}: {results['series1_to_series2']:.4f}")
-    print(f"  {config['data']['series2_name']} → {config['data']['series1_name']}: {results['series2_to_series1']:.4f}")
-    print(f"  Bidirectional: {results['bidirectional']}")
+    logger.info(f"\nCCM Results:")
+    logger.info(f"  {config['data']['series1_name']} → {config['data']['series2_name']}: {results['series1_to_series2']:.4f}")
+    logger.info(f"  {config['data']['series2_name']} → {config['data']['series1_name']}: {results['series2_to_series1']:.4f}")
+    logger.info(f"  Bidirectional: {results['bidirectional']}")
     
     # Create visualizations
-    print("\nCreating visualizations...")
+    logger.info("\nCreating visualizations...")
     create_visualizations(
         series1,
         series2,
@@ -220,7 +226,7 @@ def main():
         script_dir,
     )
     
-    print("\n CCM analysis complete")
+    logger.info("\n CCM analysis complete")
     
     if config.get("plotting", {}).get("show_plot", True):
         plt.show()
