@@ -24,15 +24,15 @@ Under suitable conditions, the reconstructed manifold is topologically equivalen
 
 Building on manifold reconstruction, Sugihara developed practical tools for analyzing time series, emphasizing:
 
-- **Nonlinear Forecasting:** Predicting system behavior using reconstructed manifolds.
+- Nonlinear Forecasting: Predicting system behavior using reconstructed manifolds.
 
-- **Causal Inference:** Distinguishing causation from correlation by analyzing interactions between manifolds.
+- Causal Inference: Distinguishing causation from correlation by analyzing interactions between manifolds.
 
 ## Convergent Cross Mapping (CCM)
 
 A key innovation by Sugihara is Convergent Cross Mapping (CCM), a method for inferring causality from time series data. CCM exploits the geometry of reconstructed manifolds to determine whether one variable's dynamics are influenced by another.
 
-**Principle:** If variable $X$ drives $Y$, the dynamics of $Y$ should encode information about $X$. This information can be extracted by:
+Principle: If variable $X$ drives $Y$, the dynamics of $Y$ should encode information about $X$. This information can be extracted by:
 
 - Reconstructing $Y$'s manifold.
 
@@ -42,29 +42,29 @@ A key innovation by Sugihara is Convergent Cross Mapping (CCM), a method for inf
 
 ## Advantages of Time Series Manifolds
 
-- **Preserving Nonlinear Dynamics:** Manifolds capture the system's true geometry, preserving non-linear dynamics that linear models cannot represent.
+- Preserving Nonlinear Dynamics: Manifolds capture the system's true geometry, preserving non-linear dynamics that linear models cannot represent.
 
-- **Causality Testing:** Manifold approaches explicitly test causation rather than relying on correlation.
+- Causality Testing: Manifold approaches explicitly test causation rather than relying on correlation.
 
 ## Applications
 
-**Ecology**
+Ecology
 
 - Marine ecosystems: CCM uncovers predator-prey relationships, such as sardine and anchovy populations in the California Current.
 
 - Biodiversity dynamics: Reconstructed manifolds reveal species interaction effects on population changes.
 
-**Climate Science**
+Climate Science
 
 - El Niño-Southern Oscillation (ENSO): Manifolds help uncover causal links between ocean temperature anomalies and global climate patterns.
 
 - Tipping points: Early warning signals for climate shifts emerge from changes in attractor geometry.
 
-**Financial Systems**
+Financial Systems
 
 - Nonlinear forecasting models market dynamics and identifies causal drivers of financial crises.
 
-**Medicine and Physiology**
+Medicine and Physiology
 
 - Cardiac dynamics: Reconstructed manifolds of ECG data reveal arrhythmias.
 
@@ -72,13 +72,13 @@ A key innovation by Sugihara is Convergent Cross Mapping (CCM), a method for inf
 
 ## Constructing and Analyzing Manifolds: Practical Steps
 
-- **Selecting Time Delay ($\tau$):** Use the autocorrelation function or mutual information to determine an optimal delay that balances redundancy and information content.
+- Selecting Time Delay ($\tau$): Use the autocorrelation function or mutual information to determine an optimal delay that balances redundancy and information content.
 
-- **Choosing Embedding Dimension (m):** Apply methods like false nearest neighbors (FNN) to identify the minimal $m$ that unfolds the manifold without overlapping trajectories.
+- Choosing Embedding Dimension (m): Apply methods like false nearest neighbors (FNN) to identify the minimal $m$ that unfolds the manifold without overlapping trajectories.
 
-- **Reconstruction:** Form the embedded vectors and visualize the reconstructed attractor using techniques like 3D phase plots.
+- Reconstruction: Form the embedded vectors and visualize the reconstructed attractor using techniques like 3D phase plots.
 
-- **Validation:** Validate the reconstructed manifold using forecasting skill (e.g., predicting future states) or CCM results.
+- Validation: Validate the reconstructed manifold using forecasting skill (e.g., predicting future states) or CCM results.
 
 ## Case Study: Sardine-Anchovy Dynamics
 
@@ -88,15 +88,15 @@ CCM revealed a causal relationship where environmental conditions mediate sardin
 
 ## Challenges and Future Directions
 
-**High-Dimensional Systems**
+High-Dimensional Systems
 
 - Reconstructing manifolds in high-dimensional systems quickly becomes computationally intensive as the number of dimensions grows. To overcome this challenge, researchers are focusing on creating more efficient algorithms and exploring advanced dimensionality reduction techniques to streamline the process.
 
-**Noise and Data Quality**
+Noise and Data Quality
 
 - Time series data from real-world scenarios often come with noise and missing values, complicating analysis. Developing robust methods to reconstruct manifolds in noisy environments remains a critical area of ongoing research, ensuring accurate insights despite imperfect data.
 
-**Integrating Multivariate Data**
+Integrating Multivariate Data
 
 - While many current applications center on single-variable reconstructions, extending manifold techniques to multivariate time series unlocks deeper insights into complex system dynamics. This approach holds the potential to reveal interconnected patterns across multiple variables, enriching our understanding of underlying processes.
 
@@ -108,5 +108,5 @@ Time series manifolds come with limitations but provide a more intuitive underst
 
 - A dripping faucet's dynamics following a chaotic yet deterministic pattern represented by an attractor.
 - Climate systems evolving on a manifold defined by interacting variables such as temperature, pressure, and ocean currents.
-- **Nonlinear Forecasting:** Predicting system behavior using reconstructed manifolds.
-- **Causal Inference:** Distinguishing causation from correlation by analyzing interactions between manifolds.
+- Nonlinear Forecasting: Predicting system behavior using reconstructed manifolds.
+- Causal Inference: Distinguishing causation from correlation by analyzing interactions between manifolds.
