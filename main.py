@@ -4,7 +4,6 @@ Convergent Cross Mapping (CCM)
 Causal inference method for detecting causality in time series using state space reconstruction.
 """
 
-import sys
 from pathlib import Path
 
 import logging
@@ -28,8 +27,6 @@ from src import (
     save_plot,
 )
 
-from sklearn.neighbors import NearestNeighbors
-from sklearn.preprocessing import StandardScaler
 
 
 def time_delay_embedding(series: np.ndarray, delay: int, dimension: int):
@@ -208,7 +205,7 @@ def main():
     logger.info("\nDetecting causality using CCM...")
     results = detect_causality(series1, series2, config)
     
-    logger.info(f"\nCCM Results:")
+    logger.info("\nCCM Results:")
     logger.info(f"  {config['data']['series1_name']} → {config['data']['series2_name']}: {results['series1_to_series2']:.4f}")
     logger.info(f"  {config['data']['series2_name']} → {config['data']['series1_name']}: {results['series2_to_series1']:.4f}")
     logger.info(f"  Bidirectional: {results['bidirectional']}")
