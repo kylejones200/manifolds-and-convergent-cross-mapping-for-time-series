@@ -7,17 +7,10 @@ Causal inference method for detecting causality in time series using state space
 import logging
 from pathlib import Path
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-# Add src to path
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# Import consolidated utilities (signalplot already applied in src/__init__.py)
 from src import (
     ensure_output_dir,
     get_output_dir,
@@ -25,6 +18,13 @@ from src import (
     load_time_series,
     save_plot,
 )
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+# Add src to path
+
+
+# Import consolidated utilities (signalplot already applied in src/__init__.py)
 
 
 def time_delay_embedding(series: np.ndarray, delay: int, dimension: int):
@@ -41,7 +41,7 @@ def cross_map(
     target: np.ndarray,
     delay: int,
     dimension: int,
-    n_neighbors: int = None,
+    n_neighbors: int | None = None,
 ):
     """Cross-map from source to target using state space reconstruction."""
     if n_neighbors is None:
@@ -49,14 +49,11 @@ def cross_map(
 
     embedded_target = time_delay_embedding(target, delay, dimension)
     predictions = []
-
     for i in range(len(embedded_target)):
         distances = np.linalg.norm(embedded_target - embedded_target[i], axis=1)
         neighbors = np.argsort(distances)[1 : n_neighbors + 1]
-
         weights = 1 / (distances[neighbors] + 1e-10)
         weights /= np.sum(weights)
-
         prediction = np.sum(weights * source[neighbors])
         predictions.append(prediction)
 
@@ -68,15 +65,13 @@ def compute_ccm_correlation(
     target: np.ndarray,
     delay: int,
     dimension: int,
-    n_neighbors: int = None,
+    n_neighbors: int | None = None,
 ):
     """Compute CCM correlation between source and target."""
     predictions = cross_map(source, target, delay, dimension, n_neighbors)
-
     min_len = min(len(source) - (dimension - 1) * delay, len(predictions))
     source_aligned = source[(dimension - 1) * delay : (dimension - 1) * delay + min_len]
     predictions_aligned = predictions[:min_len]
-
     if len(source_aligned) < 2:
         return 0.0
 
@@ -89,14 +84,8 @@ def detect_causality(series1: np.ndarray, series2: np.ndarray, config: dict):
     delay = config["model"]["delay"]
     dimension = config["model"]["dimension"]
     n_neighbors = config["model"].get("n_neighbors", dimension + 1)
-
-    corr_1_to_2 = compute_ccm_correlation(
-        series1, series2, delay, dimension, n_neighbors
-    )
-    corr_2_to_1 = compute_ccm_correlation(
-        series2, series1, delay, dimension, n_neighbors
-    )
-
+    corr_1_to_2 = compute_ccm_correlation(series1, series2, delay, dimension, n_neighbors)
+    corr_2_to_1 = compute_ccm_correlation(series2, series1, delay, dimension, n_neighbors)
     return {
         "series1_to_series2": corr_1_to_2,
         "series2_to_series1": corr_2_to_1,
@@ -118,22 +107,13 @@ def create_visualizations(
     delay = config["model"]["delay"]
     dimension = config["model"]["dimension"]
     n_neighbors = config["model"].get("n_neighbors", dimension + 1)
-
     predictions_1_to_2 = cross_map(series1, series2, delay, dimension, n_neighbors)
     predictions_2_to_1 = cross_map(series2, series1, delay, dimension, n_neighbors)
-
     min_len_1 = min(len(series1) - (dimension - 1) * delay, len(predictions_1_to_2))
     min_len_2 = min(len(series2) - (dimension - 1) * delay, len(predictions_2_to_1))
-
-    series1_aligned = series1[
-        (dimension - 1) * delay : (dimension - 1) * delay + min_len_1
-    ]
-    series2_aligned = series2[
-        (dimension - 1) * delay : (dimension - 1) * delay + min_len_2
-    ]
-
+    series1_aligned = series1[(dimension - 1) * delay : (dimension - 1) * delay + min_len_1]
+    series2_aligned = series2[(dimension - 1) * delay : (dimension - 1) * delay + min_len_2]
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-
     axes[0, 0].plot(
         series1_aligned,
         "k-",
@@ -152,7 +132,6 @@ def create_visualizations(
     axes[0, 0].set_ylabel("Value")
     axes[0, 0].legend(loc="best")
     axes[0, 0].grid(True, alpha=0.3)
-
     axes[0, 1].plot(
         series2_aligned,
         "k-",
@@ -171,7 +150,6 @@ def create_visualizations(
     axes[0, 1].set_ylabel("Value")
     axes[0, 1].legend(loc="best")
     axes[0, 1].grid(True, alpha=0.3)
-
     axes[1, 0].scatter(series1_aligned, predictions_2_to_1[:min_len_1], alpha=0.6, s=20)
     axes[1, 0].plot(
         [series1_aligned.min(), series1_aligned.max()],
@@ -183,7 +161,6 @@ def create_visualizations(
     axes[1, 0].set_ylabel(f"Predicted {series1_name}")
     axes[1, 0].set_title(f"Correlation: {results['series2_to_series1']:.3f}")
     axes[1, 0].grid(True, alpha=0.3)
-
     axes[1, 1].scatter(series2_aligned, predictions_1_to_2[:min_len_2], alpha=0.6, s=20)
     axes[1, 1].plot(
         [series2_aligned.min(), series2_aligned.max()],
@@ -195,20 +172,18 @@ def create_visualizations(
     axes[1, 1].set_ylabel(f"Predicted {series2_name}")
     axes[1, 1].set_title(f"Correlation: {results['series1_to_series2']:.3f}")
     axes[1, 1].grid(True, alpha=0.3)
-
     plt.tight_layout()
-    output_dir = ensure_output_dir(get_output_dir(config, script_dir))
-    save_plot(fig, output_dir / "ccm_analysis.png", dpi=300)
+    output_dir = ensure_output_dir(config)
+    fig.savefig(output_dir / "ccm_analysis.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
     logger.info(f"Plot saved to: {output_dir / 'ccm_analysis.png'}")
 
 
 def main():
     """Main execution function."""
     script_dir = Path(__file__).parent
-
     # Load configuration using consolidated loader
     config = load_config()
-
     # Load data - CCM requires two series
     data_cfg = config["data"]
     if "input_file" in data_cfg:
@@ -228,8 +203,8 @@ def main():
                 p = script_dir.parent / "data" / data_cfg[path_key]
             s = load_time_series(
                 str(p),
-                date_column=data_cfg.get("date_col", "date"),
-                value_column=data_cfg.get(value_key, "value"),
+                date_col=data_cfg.get("date_col", "date"),
+                value_col=data_cfg.get(value_key, "value"),
             )
             return s.values
 
@@ -237,11 +212,9 @@ def main():
         series2 = _load_series("series2_file", "series2_col")
 
     logger.info(f"Loaded {len(series1)} data points for both series")
-
     # Detect causality
     logger.info("\nDetecting causality using CCM...")
     results = detect_causality(series1, series2, config)
-
     logger.info("\nCCM Results:")
     logger.info(
         f"  {config['data']['series1_name']} → {config['data']['series2_name']}: {results['series1_to_series2']:.4f}"
@@ -250,7 +223,6 @@ def main():
         f"  {config['data']['series2_name']} → {config['data']['series1_name']}: {results['series2_to_series1']:.4f}"
     )
     logger.info(f"  Bidirectional: {results['bidirectional']}")
-
     # Create visualizations
     logger.info("\nCreating visualizations...")
     create_visualizations(
@@ -262,9 +234,7 @@ def main():
         config,
         script_dir,
     )
-
     logger.info("\n CCM analysis complete")
-
     if config.get("plotting", {}).get("show_plot", True):
         plt.show()
     else:
